@@ -23,7 +23,6 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.limbo.emu.lib.R;
-import com.max2idea.android.limbo.files.FileUtils;
 import com.max2idea.android.limbo.jni.MachineExecutorFactory;
 import com.max2idea.android.limbo.main.LimboApplication;
 
@@ -288,8 +287,8 @@ public class MachineController {
         return machineExecutor.getMachine().getName();
     }
 
-    public boolean isVNCEnabled() {
-        return getMachineExecutor().getMachine().getEnableVNC() == 1;
+    public String getUI() {
+        return getMachineExecutor().getMachine().getUI();
     }
 
     String start() {

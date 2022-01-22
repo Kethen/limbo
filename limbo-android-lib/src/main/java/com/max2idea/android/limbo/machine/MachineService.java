@@ -40,7 +40,6 @@ import androidx.core.app.NotificationCompat;
 import com.limbo.emu.lib.R;
 import com.max2idea.android.limbo.files.FileUtils;
 import com.max2idea.android.limbo.main.Config;
-import com.max2idea.android.limbo.main.LimboActivity;
 import com.max2idea.android.limbo.main.LimboSettingsManager;
 import com.max2idea.android.limbo.network.NetworkUtils;
 import com.max2idea.android.limbo.toast.ToastUtils;
@@ -87,7 +86,7 @@ public class MachineService extends Service {
                 return START_NOT_STICKY;
 
             String text = MachineController.getInstance().getMachine().getName() + ": VM Running";
-            if (MachineController.getInstance().isVNCEnabled()) {
+            if (MachineController.getInstance().getUI().equals("VNC")) {
                 text += " - " + service.getString(R.string.vncServer);
                 text += ": " + NetworkUtils.getVNCAddress(service) + ":" + Config.defaultVNCPort;
             }

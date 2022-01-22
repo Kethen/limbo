@@ -3,10 +3,10 @@
 #LIMBO_JNI_ROOT := /home/dev/limbo/workspace_limbo/limbo-android-lib/src/main/jni
 
 # Last version with gcc support is 14b 
-#NDK_ROOT = /home/dev/tools/ndk/android-ndk-r14b
+#NDK_ROOT = /home/katharine/android/android-ndk-r14b
 #USE_GCC?=true
 # Or use r23 with clang 
-NDK_ROOT ?= /home/dev/tools/ndk/android-ndk-r23
+NDK_ROOT ?= /home/katharine/android/android-ndk-r23b
 USE_GCC?=false
 
 ### the ndk api should be the same as the minSdkVersion in your AndroidManifest.xml 
@@ -41,7 +41,7 @@ BUILD_THREADS ?= 3
 
 # Android device type (host arch)
 # values: armeabi-v7a, arm64-v8a, x86, x86_64
-BUILD_HOST?=arm64-v8a
+BUILD_HOST?=x86_64
 
 # GUEST_ARCH is the Emulator type
 # values: x86_64-softmmu,aarch64-softmmu,sparc64-softmmu,ppc64-softmmu
@@ -49,7 +49,7 @@ BUILD_GUEST?=x86_64-softmmu
 
 # QEMU Version
 # values: 2.9.1, 5.1.0
-USE_QEMU_VERSION ?= 2.9.1
+USE_QEMU_VERSION ?= 5.1.0
 
 # If you want to use SDL interface
 USE_SDL ?= true

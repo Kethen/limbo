@@ -33,7 +33,7 @@ public class Machine extends Observable {
     private String name;
     private String keyboard = Config.defaultKeyboardLayout;
     private String mouse = "ps2";
-    private int enableVNC;
+    private String ui = "SDL";
     private String arch;
     private String machineType;
     private String cpu = "Default";
@@ -93,15 +93,19 @@ public class Machine extends Observable {
         this.name = name;
     }
 
-    public int getEnableVNC() {
-        return enableVNC;
+    public String getUI() {
+        if(ui == null){
+            ui = "vnc";
+        }
+        return ui;
     }
 
-    void setEnableVNC(int enableVNC) {
-        if (this.enableVNC != enableVNC) {
-            this.enableVNC = enableVNC;
+    void setUI(String ui) {
+        if (!this.ui.equals(ui)) {
+            this.ui = ui;
             setChanged();
-            notifyChanged(MachineProperty.UI, enableVNC);
+            notifyChanged(MachineProperty.UI, ui);
+            return;
         }
     }
 

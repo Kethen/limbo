@@ -189,7 +189,8 @@ private String getQemuLibrary() {
     }
 
     private void addUIOptions(Context context, ArrayList<String> paramsList) {
-        if (MachineController.getInstance().isVNCEnabled()) {
+        String ui = MachineController.getInstance().getUI();
+        if (ui.equals("VNC")) {
             paramsList.add("-vnc");
             String vncParam = "";
             if (LimboSettingsManager.getVNCEnablePassword(context)) {
@@ -221,6 +222,13 @@ private String getQemuLibrary() {
 
             paramsList.add("-parallel");
             paramsList.add("none");
+
+            paramsList.add("-display");
+            if(ui.equals("SDLGL")){
+                paramsList.add("sdl,gl=es");
+            }else{
+                paramsList.add("sdl");
+            }
         }
 
         if (getMachine().getKeyboard() != null) {
@@ -453,12 +461,19 @@ private String getQemuLibrary() {
     }
 
     private void addGraphicsOptions(ArrayList<String> paramsList) {
-        if (getMachine().getVga() != null) {
-            if (getMachine().getVga().equals("Default")) {
+        String vga = getMachine().getVga();
+        if (vga != null) {
+            if (vga.equals("Default")) {
                 //do nothing
-            } else if (getMachine().getVga().equals("virtio-gpu-pci")) {
+            } else if (vga.equals("virtio-vga") || vga.equals("virtio-vga,virgl=on")) {
                 paramsList.add("-device");
-                paramsList.add(getMachine().getVga());
+                if(vga.equals("virtio-vga")){
+                    paramsList.add("virtio-vga");
+                }else{
+                    // this is changed in qemu 6
+                    paramsList.add("virtio-vga,virgl=on");
+                }
+
             } else if (getMachine().getVga().equals("nographic")) {
                 paramsList.add("-nographic");
             } else {
@@ -726,11 +741,11 @@ private String getQemuLibrary() {
             String[] params = prepareParams(LimboApplication.getInstance());
             printParams(params);
             // XXX: for VNC we need to resume manually after a reasonable amount of time
-            if (getMachine().getPaused() == 1 && MachineController.getInstance().isVNCEnabled()) {
+            if (getMachine().getPaused() == 1 && MachineController.getInstance().getUI().equals("VNC")) {
                 continueVM(5000);
             }
 
-            if (MachineController.getInstance().isVNCEnabled() && LimboSettingsManager.getVNCEnablePassword(LimboApplication.getInstance())) {
+            if (MachineController.getInstance().getUI().equals("VNC") && LimboSettingsManager.getVNCEnablePassword(LimboApplication.getInstance())) {
                 changeVncPass(LimboApplication.getInstance(), 2000);
             }
             QmpClient.setExternal(LimboSettingsManager.getEnableExternalQMP(LimboApplication.getInstance()));

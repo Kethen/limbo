@@ -24,7 +24,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Build;
@@ -1035,7 +1034,7 @@ public class LimboActivity extends AppCompatActivity
 
     private void onPauseButton() {
         if (MachineController.getInstance().isRunning()) {
-            if (MachineController.getInstance().isVNCEnabled())
+            if (MachineController.getInstance().getUI().equals("VNC"))
                 LimboActivityCommon.promptPause(this, viewListener);
             else {
                 LimboSDLActivity.pendingPause = true;
@@ -1339,7 +1338,7 @@ public class LimboActivity extends AppCompatActivity
 
         //audio
         if (Config.enableSDLSound && getMachine() != null
-                && getMachine().getEnableVNC() != 1
+                && !getMachine().getUI().equals("VNC")
                 && getMachine().getPaused() == 0)
             mSoundCard.setEnabled(flag);
         else
@@ -1384,7 +1383,7 @@ public class LimboActivity extends AppCompatActivity
         //XXX: make sure that bios files are installed in case we ran out of space in the last run
         FileInstaller.installFiles(LimboActivity.this, false);
 
-        if (getMachine().getEnableVNC() == 1) {
+        if (getMachine().getUI().equals("VNC")) {
             startVNC();
         } else {
             startSDL();
@@ -1446,7 +1445,7 @@ public class LimboActivity extends AppCompatActivity
     private void onStopButton(boolean exitApp) {
         KeyboardUtils.hideKeyboard(this, mScrollView);
         if (MachineController.getInstance().isRunning()) {
-            if (MachineController.getInstance().isVNCEnabled())
+            if (MachineController.getInstance().getUI().equals("VNC"))
                 LimboActivityCommon.promptStopVM(this, viewListener);
             else {
                 LimboSDLActivity.pendingStop = true;
@@ -1753,10 +1752,13 @@ public class LimboActivity extends AppCompatActivity
         if (clear || getMachine() == null || mMachine.getSelectedItemPosition() < 2)
             mUISectionSummary.setText("");
         else {
-            String text = getString(R.string.display) + ": " + (getMachine().getEnableVNC() == 1 ? "VNC" : "SDL");
-            if (getMachine().getEnableVNC() == 1) {
+            String ui = getMachine().getUI();
+            String text = getString(R.string.display) + ": " + (getMachine().getUI());
+            if (ui.equals("VNC")) {
                 text += ", " + getString(R.string.server);
                 text += ": " + NetworkUtils.getVNCAddress(this) + ":" + Config.defaultVNCPort;
+            }else if (ui.equals("SDLGL")){
+                text += ", with gles";
             }
             if (getMachine().getKeyboard() != null) {
                 text += ", " + getString(R.string.keyboard) + ": " + getMachine().getKeyboard();
@@ -2022,7 +2024,7 @@ public class LimboActivity extends AppCompatActivity
         SpinnerAdapter.setDiskAdapterValue(mNetConfig, getMachine().getNetwork());
         SpinnerAdapter.setDiskAdapterValue(mVGAConfig, getMachine().getVga());
         SpinnerAdapter.setDiskAdapterValue(mSoundCard, getMachine().getSoundCard());
-        SpinnerAdapter.setDiskAdapterValue(mUI, getMachine().getEnableVNC() == 1 ? "VNC" : "SDL");
+        SpinnerAdapter.setDiskAdapterValue(mUI, getMachine().getUI());
         SpinnerAdapter.setDiskAdapterValue(mMouse, fixMouseValue(getMachine().getMouse()));
         SpinnerAdapter.setDiskAdapterValue(mKeyboard, getMachine().getKeyboard());
 
@@ -2038,7 +2040,7 @@ public class LimboActivity extends AppCompatActivity
         enableRemovableDeviceOptions(!MachineController.getInstance().isRunning());
 
         if (Config.enableSDLSound) {
-            mSoundCard.setEnabled(getMachine().getEnableVNC() != 1 && getMachine().getPaused() == 0);
+            mSoundCard.setEnabled(!getMachine().getUI().equals("VNC") && getMachine().getPaused() == 0);
         } else
             mSoundCard.setEnabled(false);
 
@@ -2777,7 +2779,7 @@ public class LimboActivity extends AppCompatActivity
                 if (params[0] instanceof MachineProperty) {
                     MachineProperty property = (MachineProperty) params[0];
                     if (property == MachineProperty.UI) {
-                        if (getMachine().getEnableVNC() != 1)
+                        if (!getMachine().getUI().equals("VNC"))
                             mSoundCard.setEnabled(true);
                         else
                             mSoundCard.setEnabled(true);

@@ -187,7 +187,7 @@ public class MachineOpenHelper extends SQLiteOpenHelper implements IMachineDatab
         stateValues.put(MachineProperty.EXTRA_PARAMS.name(), machine.getExtraParams());
         stateValues.put(MachineProperty.HOSTFWD.name(), machine.getHostFwd());
         stateValues.put(MachineProperty.GUESTFWD.name(), machine.getGuestFwd());
-        stateValues.put(MachineProperty.UI.name(), machine.getEnableVNC() == 1 ? "VNC" : "SDL");
+        stateValues.put(MachineProperty.UI.name(), machine.getUI());
         stateValues.put(MachineProperty.MOUSE.name(), machine.getMouse());
         stateValues.put(MachineProperty.KEYBOARD.name(), machine.getKeyboard());
         stateValues.put(MachineProperty.ENABLE_MTTCG.name(), machine.getEnableMTTCG());
@@ -307,7 +307,7 @@ public class MachineOpenHelper extends SQLiteOpenHelper implements IMachineDatab
             myMachine.setExtraParams(cur.getString(31));
             myMachine.setHostFwd(cur.getString(32));
             myMachine.setGuestFwd(cur.getString(33));
-            myMachine.setEnableVNC(cur.getString(34).equals("VNC") ? 1 : 0);
+            myMachine.setUI(cur.getString(34));
             myMachine.setDisableTSC(cur.getInt(35));
             myMachine.setMouse(cur.getString(36));
             myMachine.setKeyboard(cur.getString(37));

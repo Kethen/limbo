@@ -89,8 +89,19 @@ public class ArchDefinitions {
             vgaValues.add("cg3");
         }
 
+        /*
         if (LimboApplication.arch == Config.Arch.arm || LimboApplication.arch == Config.Arch.arm64) {
             vgaValues.add("virtio-gpu-pci");
+        }
+        */
+
+        // virtio-vga is supported on arm and x86 as -device, but not as a -vga argument on x86
+        // -device virtio-vga will work on both, and from 6.00 onward virtio-vga,virgl= was splitted into virtio-vga and virtio-vga-gl
+        // make a placeholder value for later
+        if(LimboApplication.arch == Config.Arch.x86 || LimboApplication.arch == Config.Arch.x86_64
+                || LimboApplication.arch == Config.Arch.arm || LimboApplication.arch == Config.Arch.arm64){
+            vgaValues.add("virtio-vga");
+            vgaValues.add("virtio-vga,virgl=on");
         }
 
         //XXX: some archs don't support vga on QEMU like SPARC64
@@ -118,8 +129,10 @@ public class ArchDefinitions {
     public static ArrayList<String> getUIValues() {
         ArrayList<String> arrList = new ArrayList<>();
         arrList.add("VNC");
-        if (Config.enable_SDL)
+        if (Config.enable_SDL) {
             arrList.add("SDL");
+            arrList.add("SDLGL");
+        }
         return arrList;
     }
 
